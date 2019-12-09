@@ -6,7 +6,7 @@ SimpleRestful
 
 ## Feature
 
-Restful的Api,虽然目的是SSKDs应用,但还是遵循了以下规则:  
+RESTful Api,虽然目的是SSKDs应用,但还是遵循了以下规则:  
 
 1.将HTTP方法作为动词  
 2.不返回JSON数组
