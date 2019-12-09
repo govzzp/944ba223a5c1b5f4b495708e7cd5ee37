@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="pers.me.monday.mapper.TeacherMapper">
+
+    <resultMap type="pers.me.monday.model.table.Teacher" id = "Teacher">
+        <result column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="dept_no" property="deptNo"/>
+        <result column="dept_name" property="deptName"/>
+    </resultMap>
+
+    <sql id="table">teacher</sql>
+    <sql id="selectFields">id,name,dept_no,dept_name,privilege</sql>
+
+    <select id="getInfoById" resultMap="Teacher">
+        SELECT
+        <include refid="selectFields"/>
+        FROM
+        <include refid="table"/>
+        WHERE
+        id = #{id}
+    </select>
+</mapper>

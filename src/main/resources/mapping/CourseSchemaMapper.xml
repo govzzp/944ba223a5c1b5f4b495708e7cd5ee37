@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+        <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+                "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="pers.me.monday.mapper.CourseSchemaMapper">
+
+    <resultMap type="pers.me.monday.model.table.CourseSchema" id="CourseSchema">
+        <result column="schema_id" property="schemaId"/>
+        <result column="course_id" property="courseId"/>
+        <result column="start_week" property="startWeek"/>
+        <result column="end_week" property="endWeek"/>
+        <result column="start_section" property="startSection"/>
+        <result column="end_section" property="endSection"/>
+        <result column="class_room" property="classRoom"/>
+        <result column="week_day" property="weekDay"/>
+    </resultMap>
+
+    <sql id="table">course_schema</sql>
+    <sql id="selectFields">schema_id,course_id,start_week,end_week,start_section,end_section,class_room,week_day,odd_or_even</sql>
+
+    <select id="getOneRecordBy2Ids" resultMap="CourseSchema">
+        SELECT
+        <include refid="selectFields"/>
+        FROM
+        <include refid="table"/>
+        WHERE
+        schema_id = #{schemaId} AND course_id = #{courseId}
+    </select>
+    <sql id="detailCourseSchemaFields">course_id,start_week,end_week,start_section,end_section,class_room,week_day,odd_or_even,teacher_name,dept,name</sql>
+
+    <resultMap type="java.util.HashMap" id="DetailedCourseSchema">
+    </resultMap>
+
+    <select id="getDetailRecordsBySchemaId" resultMap="DetailedCourseSchema">
+        SELECT
+        <include refid="detailCourseSchemaFields"/>
+        FROM
+        <include refid="table"/> a JOIN course b
+        ON a.course_id=b.id
+        WHERE
+        schema_id = #{schemaId}
+        AND
+        start_week &lt;= #{weekNo}
+        AND
+        end_week >= #{weekNo}
+    </select>
+    <select id="getCourseIdsBySchemaIdAndTime" resultType="java.lang.Integer">
+        SELECT course_id
+        FROM
+        course_schema
+        WHERE end_week>=#{weekNo}
+        AND
+        #{weekNo} >= start_week
+        AND week_day=#{weekDay}
+        AND schema_id=#{schemaId}
+    </select>
+</mapper>

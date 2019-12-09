@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="pers.me.monday.mapper.RecordMapper">
+    <resultMap type="pers.me.monday.model.table.Record" id="Records">
+        <result column="start_time" property="startTime"/>
+        <result column="end_time" property="endTime"/>
+        <result column="course_name" property="courseName"/>
+        <result column="teacher_name" property="teacherName"/>
+        <result column="teacher_id" property="teacherId"/>
+        <result column="status" property="status"/>
+    </resultMap>
+
+    <sql id="table">record</sql>
+    <sql id="selectFields">start_time,status,end_time,course_name,teacher_name,teacher_id</sql>
+
+    <insert id="setRecord">
+        INSERT INTO
+        skl.record(course_id,course_name,week_no,week_day,teacher_name,teacher_id,start_time,end_time,semester,student_id,student_name,status,student_dept_name)
+        VALUES
+        <foreach collection="studentRecords" item="item" index="index" separator="," >
+            (#{courseId},#{courseName},#{weekNo},#{weekDay},#{teacherName},#{teacherId},#{startTime},#{endTime},#{semester},#{item.id},#{item.name},#{item.status},#{item.dept_name})
+        </foreach>
+    </insert>
+
+    <select id="getRecordsBy2Ids" resultMap="Records">
+        SELECT
+        <include refid="selectFields"/>
+        FROM
+        <include refid="table"/>
+        WHERE
+        student_id = #{studentId} AND course_id = #{courseId}
+    </select>
+    <select id="getHistory" resultType="java.util.HashMap">
+        SELECT
+            student_id,student_name,start_time,end_time,status
+        FROM skl.record
+        WHERE
+        course_id=#{courseId}
+        AND
+        week_no=#{weekNo}
+        AND
+        week_day=#{weekDay}
+        AND
+        teacher_id=#{teacherId}
+    </select>
+</mapper>

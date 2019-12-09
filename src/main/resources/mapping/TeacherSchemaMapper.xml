@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="pers.me.monday.mapper.TeacherSchemaMapper">
+
+    <resultMap type="java.lang.Integer" id="AllCourses">
+    </resultMap>
+
+    <sql id="table">teacher_schema</sql>
+    <sql id="selectFields">schema_id</sql>
+
+    <select id="getSchemaIdByTeacherId" resultMap="AllCourses">
+        SELECT
+        <include refid="selectFields"/>
+        FROM
+        <include refid="table"/>
+        WHERE
+        teacher_id = #{teacherId}
+    </select>
+</mapper>

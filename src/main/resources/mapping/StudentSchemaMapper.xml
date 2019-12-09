@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="pers.me.monday.mapper.StudentSchemaMapper">
+
+    <resultMap type="java.lang.Integer" id="SchemaId">
+    </resultMap>
+    <resultMap id="Ids" type="Integer"/>
+
+    <sql id="table">student_schema</sql>
+    <sql id="selectFields">schema_id</sql>
+
+    <select id="getSchemaIdByStudentId" resultMap="SchemaId">
+        SELECT
+        <include refid="selectFields"/>
+        FROM
+        <include refid="table"/>
+        WHERE
+        student_id = #{id}
+    </select>
+    <select id="getStudentIdsBySchemaId" resultMap="Ids">
+        SELECT student_id
+        FROM
+        <include refid="table"/>
+        WHERE
+        schema_id= #{schemaId}
+    </select>
+    <select id="getSchemaIdsByCourseId" resultMap = "Ids">
+        SELECT schema_id
+        FROM course_schema
+        WHERE course_id= #{courseId}
+    </select>
+
+    <select id="getAllMemberInACourse" resultType="java.util.HashMap">
+        SELECT name,id,dept_name
+            FROM student
+            WHERE id IN
+            (SELECT student_id id
+                FROM student_schema
+                WHERE schema_id IN
+                (SELECT schema_id
+                    FROM course_schema
+                    WHERE course_id=#{course_id}))
+    </select>
+</mapper>

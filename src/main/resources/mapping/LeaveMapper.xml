@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="pers.me.monday.mapper.LeaveMapper">
+
+    <resultMap id="aStudentLeaveInfo" type="java.util.HashMap">
+
+    </resultMap>
+    <insert id="studentLeaveAddOne">
+        INSERT INTO
+        `leave`(student_id,start_date,end_date,len,current_pass,target_pass,reason)
+        VALUES(#{student_id},#{start_date},#{end_date},#{len},#{current_pass},#{target_pass},#{reason});
+    </insert>
+
+    <select id="teacherGetTheLeaveStudentQueue" resultMap="aStudentLeaveInfo">
+        SELECT b.student_id,a.name,b.start_date,b.end_date,c.reason
+            FROM skl.student as a
+            JOIN
+                (SELECT
+                    student_id,start_date,end_date
+                    FROM leave_teacher_accept
+                    WHERE course_id IN
+                        (SELECT course_id
+                            FROM course_schema
+                            WHERE schema_id=#{schema_id})
+                            AND end_date >=curdate()
+                            AND accepted = 0) AS b
+            ON a.id=b.student_id
+            JOIN skl.leave AS c
+            ON a.id=c.student_id;
+    </select>
+    <select id="checkPrimaryKeyExists" resultType="Integer">
+        SELECT student_id
+        FROM
+        skl.leave
+        WHERE student_id=#{student_id} AND
+        start_date=#{start_date}
+    </select>
+
+    <select id="getLeaveList" resultType="java.util.HashMap">
+        SELECT
+            start_date,end_date,len,current_pass,target_pass,reason
+        FROM
+            skl.leave
+        WHERE student_id=#{studentId}
+    </select>
+
+    <update id="teacherSetTheStudentLeaveAccepted">
+        UPDATE leave_teacher_accept
+        SET accepted = #{accepted}
+        WHERE course_id=#{course_id}
+        AND student_id = #{student_id}
+        AND start_date=#{start_date}
+    </update>
+
+
+    <select id="checkTeacherSetTheStudentLeaveRepeated" resultType="java.lang.Integer">
+        SELECT student_id
+        FROM leave_teacher_accept
+        WHERE course_id=#{course_id}
+        AND student_id = #{student_id}
+        AND start_date=#{start_date}
+        AND accepted = #{accepted}
+    </select>
+    <update id="updateTheStudentLeave">
+        UPDATE skl.leave
+        SET current_pass = #{current_pass}
+        WHERE student_id = #{student_id}
+        AND start_date = #{start_date}
+    </update>
+    <insert id="teacherLeaveAcceptedInsert">
+        INSERT INTO
+        leave_teacher_accept(course_id,student_id,start_date,end_date,accepted)
+        VALUES
+        <foreach collection="courseIds" item="item" index="index" separator="," >
+            (#{item},#{studentId},#{startDate},#{endDate},0)
+        </foreach>
+    </insert>
+
+    <select id="getLeaveTeacherList" resultType="java.util.HashMap">
+        SELECT course_id,accepted
+        FROM
+        leave_teacher_accept
+        WHERE
+        student_id=#{studentId}
+        AND
+        start_date=#{startDate}
+    </select>
+    <select id="getAdvancedLeaveStudentInfo" resultType="java.util.HashMap">
+        SELECT student_id,name,reason,start_date,end_date,len
+        FROM skl.leave AS a
+        JOIN skl.student AS b
+        ON a.student_id=b.id
+        WHERE target_pass=#{privilege}
+        AND target_pass>current_pass
+        AND current_pass!=-1
+        AND dept_no=#{deptNo}
+        AND end_date>curdate()
+    </select>
+    <select id="getMostAdvancedLeaveStudentInfo" resultType="java.util.HashMap">
+        SELECT student_id,name,reason,start_date,end_date,len
+        FROM skl.leave AS a
+        JOIN skl.student AS b
+        ON a.student_id=b.id
+        WHERE target_pass=3
+        AND target_pass>current_pass
+        AND current_pass!=1
+        AND end_date>curdate()
+    </select>
+    <select id="getUnSucceedStudent" resultType="java.util.HashMap">
+
+        SELECT name,id,dept_name
+            FROM student
+            WHERE id IN
+                (SELECT student_id id
+                    FROM student_schema
+                    WHERE schema_id IN
+                        (SELECT schema_id
+                            FROM course_schema
+                            WHERE course_id=#{courseId}))
+            AND id NOT IN
+                (SELECT student_id id
+                    FROM skl.leave
+                    WHERE current_pass=target_pass
+                    AND current_pass!=0
+                    AND end_date>=#{date}
+                UNION
+                SELECT student_id
+                    FROM leave_teacher_accept
+                    WHERE accepted=1
+                    AND course_id=#{courseId}
+                    AND start_date=#{date});
+    </select>
+    <select id="getSucceedStudent" resultType="java.util.HashMap">
+        SELECT id,name,dept_name
+            FROM skl.student
+            WHERE id IN
+                (SELECT student_id id
+                     FROM skl.leave
+                    WHERE current_pass=target_pass
+                    AND current_pass!=0
+                    AND end_date>='2019-12-06'
+                    AND student_id IN
+                        (SELECT id student_id
+                            FROM student
+                            WHERE id IN
+                                (SELECT student_id id
+                                     FROM student_schema
+                                    WHERE schema_id IN
+                                        (SELECT schema_id
+                                            FROM course_schema
+                                                WHERE course_id=1)))
+                UNION
+                SELECT student_id
+                    FROM leave_teacher_accept
+                    WHERE accepted=1
+                    AND course_id=1
+                    AND start_date='2019-12-06')
+    </select>
+
+
+</mapper>

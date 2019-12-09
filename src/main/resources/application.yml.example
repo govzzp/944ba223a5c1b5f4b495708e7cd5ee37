@@ -1,0 +1,29 @@
+spring:
+  datasource:
+    username: <>
+    password: <>
+    url: <>/skl?useAffectedRows=true
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  redis:
+    lettuce:
+      pool:
+        max-active: 8
+        max-idle: 8
+        max-wait: -1
+        min-idle: 0
+    password: <>
+    host: <>
+    port: <>
+    custom:
+      database00: 0
+      database01: 1
+      database02: 2
+      database03: 3
+      database04: 4
+mybatis:
+  mapper-locations: classpath:mapping/*Mapper.xml
+  type-aliases-package: pers.me.monday.mapper
+
+server:
+  port: <>
+
