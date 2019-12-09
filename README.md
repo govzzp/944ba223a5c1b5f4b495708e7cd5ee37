@@ -1,4 +1,4 @@
-SimpleRestful
+Simple RESTful Attendance System
 ==============
 *个人为了应付期末作业所写的虚假项目,和实际项目没有任何联系*  
 
@@ -6,7 +6,7 @@ SimpleRestful
 
 ## Feature
 
-RESTful Api,虽然目的是SSKDs应用,但还是遵循了以下规则:  
+REST Api,虽然目的是SSKDs应用,但还是遵循了以下规则:  
 
 1.将HTTP方法作为动词  
 2.不返回JSON数组
