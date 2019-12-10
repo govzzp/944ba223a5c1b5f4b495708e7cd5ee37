@@ -1,7 +1,9 @@
 package pers.me.monday.filter;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 
 import javax.servlet.*;
@@ -9,7 +11,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+
+
 public abstract class TokenAuthFilter implements Filter {
+
+    @Value("${front-end.url}")
+    String url;
+
     @Autowired
     private RedisTemplate<String,String> redisTemplate02;
 
@@ -19,8 +27,19 @@ public abstract class TokenAuthFilter implements Filter {
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         HttpServletRequest req = (HttpServletRequest) request;
         HttpServletResponse res = (HttpServletResponse) response;
-        String id = null;
+        String id;
 
+
+        //由于目前存在两个filter实体类比cors拦截器先执行的情况,所以只能加这么一段尴尬的代码
+        if(req.getMethod().equals(HttpMethod.OPTIONS.toString())){
+            res.setStatus(HttpStatus.NO_CONTENT.value());
+            res.setHeader("Access-Control-Allow-Origin", url);
+            res.setHeader("Access-Control-Allow-Credentials", "true");
+            res.setHeader("Access-Control-Allow-Methods", "GET, HEAD, POST, PUT, PATCH, DELETE, OPTIONS");
+            res.setHeader("Access-Control-Max-Age", "86400");
+            res.setHeader("Access-Control-Allow-Headers", "*");
+            return;
+        }
 
         var UID = req.getHeader("UID");
         if(UID!=null){

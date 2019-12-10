@@ -2,6 +2,7 @@ package pers.me.monday.configuration;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import pers.me.monday.interceptor.CorsInterceptor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,7 +22,6 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Resource
     private CorsInterceptor corsInterceptor;
-
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
@@ -54,5 +54,7 @@ public class WebConfig implements WebMvcConfigurer {
 //    public void addResourceHandlers(ResourceHandlerRegistry registry) {
 //        registry.addResourceHandler("/images/**").addResourceLocations("file:/temp-rainy/");
 //    }
+
+
 }
 

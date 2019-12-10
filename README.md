@@ -60,7 +60,7 @@ Keys(String):
 
 ### Run
 ```
-    cd target&&java -jar demo-0.0.1-SNAPSHOT.jar
+    cd target&&java -jar Monday-0.0.1-SNAPSHOT.jar
 ```
 ### Environment
 ```

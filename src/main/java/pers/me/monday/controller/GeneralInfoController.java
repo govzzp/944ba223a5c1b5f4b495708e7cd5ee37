@@ -60,4 +60,6 @@ public class GeneralInfoController {
         ApiHelper helper = new ApiHelper();
         return new ResponseEntity<ApiHelper>(helper, HttpStatus.OK);
     }
+
+
 }

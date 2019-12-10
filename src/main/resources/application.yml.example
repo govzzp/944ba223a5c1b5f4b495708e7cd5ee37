@@ -27,3 +27,6 @@ mybatis:
 server:
   port: <>
 
+front-end:
+  url: <>
+
